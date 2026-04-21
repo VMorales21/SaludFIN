@@ -5,7 +5,9 @@ use App\Http\Controllers\API\TratamientoController;
 use App\Http\Controllers\API\ConsultaController;
 use App\Http\Controllers\API\DetalleCostoController;
 use App\Http\Controllers\API\ReporteController;
-
+Route::get('/test', function () {
+    return response()->json(['ok' => true]);
+});
 Route::apiResource('pacientes', PacienteController::class);
 Route::apiResource('enfermedades', EnfermedadController::class);
 Route::apiResource('tratamientos', TratamientoController::class);
