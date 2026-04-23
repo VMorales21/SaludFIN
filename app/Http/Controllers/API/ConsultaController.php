@@ -8,44 +8,59 @@ use Illuminate\Http\Request;
 
 class ConsultaController extends Controller
 {
-    public function index() {
-        return response()->json(
-            Consulta::with(['paciente','enfermedad','tratamiento'])->get()
-        );
+    // 🔹 Listar todas las consultas
+    public function index()
+    {
+        return Consulta::with('perfil')->get();
     }
 
-    public function show($id) {
-        $data = Consulta::with(['paciente','enfermedad','tratamiento'])->find($id);
-
-        return $data ? response()->json($data)
-                     : response()->json(['mensaje'=>'No encontrado'],404);
-    }
-
-    public function store(Request $request) {
+    // 🔹 Crear nueva consulta
+    public function store(Request $request)
+    {
         $request->validate([
-            'id_paciente'=>'required|integer',
-            'id_enfermedad'=>'required|integer',
-            'id_tratamiento'=>'required|integer',
-            'fecha'=>'required|date',
-            'costo_total'=>'required|numeric'
+            'idPerfil' => 'required|exists:perfiles,idPerfil',
+            'fecha' => 'required|date',
+            'doctor' => 'required|string|max:150',
+            'motivo' => 'required|string',
+            'costo' => 'required|numeric'
         ]);
 
-        return response()->json(Consulta::create($request->all()),201);
+        $consulta = Consulta::create($request->all());
+
+        return response()->json($consulta, 201);
     }
 
-    public function update(Request $request, $id) {
-        $data = Consulta::find($id);
-        if(!$data) return response()->json(['mensaje'=>'No encontrado'],404);
-
-        $data->update($request->all());
-        return response()->json($data);
+    // 🔹 Mostrar una consulta específica
+    public function show($id)
+    {
+        return Consulta::with('perfil')->findOrFail($id);
     }
 
-    public function destroy($id) {
-        $data = Consulta::find($id);
-        if(!$data) return response()->json(['mensaje'=>'No encontrado'],404);
+    // 🔹 Actualizar consulta
+    public function update(Request $request, $id)
+    {
+        $consulta = Consulta::findOrFail($id);
 
-        $data->delete();
-        return response()->json(['mensaje'=>'Eliminado']);
+        $request->validate([
+            'idPerfil' => 'sometimes|exists:perfiles,idPerfil',
+            'fecha' => 'sometimes|date',
+            'doctor' => 'sometimes|string|max:150',
+            'motivo' => 'sometimes|string',
+            'costo' => 'sometimes|numeric'
+        ]);
+
+        $consulta->update($request->all());
+
+        return response()->json($consulta);
+    }
+
+    // 🔹 Eliminar consulta
+    public function destroy($id)
+    {
+        Consulta::destroy($id);
+
+        return response()->json([
+            'mensaje' => 'Consulta eliminada correctamente'
+        ]);
     }
 }

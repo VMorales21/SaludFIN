@@ -1,20 +1,31 @@
 <?php
-use App\Http\Controllers\API\PacienteController;
-use App\Http\Controllers\API\EnfermedadController;
-use App\Http\Controllers\API\TratamientoController;
+use App\Http\Controllers\API\UsuarioController;
+use App\Http\Controllers\API\PerfilController;
+use App\Http\Controllers\API\CategoriaGastoController;
+use App\Http\Controllers\API\GastoController;
+use App\Http\Controllers\API\IngresoController;
+use App\Http\Controllers\API\PresupuestoController;
+use App\Http\Controllers\API\AlertaController;
 use App\Http\Controllers\API\ConsultaController;
-use App\Http\Controllers\API\DetalleCostoController;
-use App\Http\Controllers\API\ReporteController;
-Route::get('/test', function () {
-    return response()->json(['ok' => true]);
-});
-Route::apiResource('pacientes', PacienteController::class);
-Route::apiResource('enfermedades', EnfermedadController::class);
-Route::apiResource('tratamientos', TratamientoController::class);
+use App\Http\Controllers\API\DetalleGastoController;
+
+
+Route::apiResource('detalle-gastos', DetalleGastoController::class);
 Route::apiResource('consultas', ConsultaController::class);
-Route::apiResource('detalle-costos', DetalleCostoController::class);
-// rutas para  los reportes
-Route::get('/enfermedades-frecuentes', [ReporteController::class, 'enfermedadesFrecuentes']);
-Route::get('/gasto-paciente', [ReporteController::class, 'gastoPorPaciente']);
-Route::get('/costos-tratamiento', [ReporteController::class, 'costosPorTratamiento']);
-Route::get('/gasto-tipo', [ReporteController::class, 'gastoPorTipo']);
+Route::apiResource('usuarios', UsuarioController::class);
+Route::apiResource('perfiles', PerfilController::class);
+Route::apiResource('categorias', CategoriaGastoController::class);
+Route::apiResource('gastos', GastoController::class);
+Route::apiResource('ingresos', IngresoController::class);
+Route::apiResource('presupuestos', PresupuestoController::class);
+Route::apiResource('alertas', AlertaController::class);
+//consultas
+Route::apiResources([
+    'gastos/usuario' => GastoController::class,
+    'ingresos/usuario' => IngresoController::class,
+    'presupuestos/usuario' => PresupuestoController::class,
+]);
+
+
+// Ruta extra
+Route::get('alertas/usuario/{idUsuario}', [AlertaController::class, 'porUsuario']);
